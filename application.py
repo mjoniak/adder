@@ -1,8 +1,9 @@
 import tkinter as tk
 from typing import Set
 
-from block import Block
+from block import Block, source, negation, display_block
 from connector import Connector
+from simulation import Simulation
 
 
 class Application(tk.Frame):
@@ -31,21 +32,40 @@ class Application(tk.Frame):
         self._canvas.bind("<Motion>", self._on_motion)
         self._canvas.pack()
 
-        block1 = Block(50, 100, 2, 1)
+        block1 = source(x=100, y=100)
         self._observed_blocks.add(block1)
 
-        block2 = Block(200, 150, 1, 1)
+        block2 = negation(x=200, y=100)
         self._observed_blocks.add(block2)
+
+        block3 = display_block(x=300, y=100)
+        self._observed_blocks.add(block3)
+
+        self._run_button = tk.Button(self.master,
+                                     text='Run Simulation',
+                                     bg='lightgreen',
+                                     relief='flat',
+                                     command=self._run_simulation)
+        self._run_button.place(x=650, y=550, width=120)
+
+    def _run_simulation(self):
+        simulation = Simulation(list(self._observed_blocks))
+        simulation.run()
+        self._redraw()
 
     def _on_left_click(self, event):
         clicked_connectors = (b.inside_connector(event) for b in self._observed_blocks)
-        clicked = next((c for c in clicked_connectors if c), None)
-        if clicked:
+        clicked_connector = next((c for c in clicked_connectors if c), None)
+        if clicked_connector:
             if self._dragging_line_from is None:
-                self._dragging_line_from = clicked
+                self._dragging_line_from = clicked_connector
             else:
-                self._dragging_line_from.connect_with(clicked)
+                self._dragging_line_from.connect_with(clicked_connector)
                 self._dragging_line_from = None
+        else:
+            clicked_block = next((b for b in self._observed_blocks if b.contains(event)), None)
+            if clicked_block:
+                clicked_block.switch()
 
         self._redraw()
 
@@ -74,6 +94,9 @@ class Application(tk.Frame):
             for connector in block.connectors:
                 self._canvas.create_rectangle(*connector.rect())
 
+            x, y = block.middle()
+            text = block.label()
+            self._canvas.create_text(x, y, text=text)
 
 ROOT = tk.Tk()
 APP = Application(master=ROOT)

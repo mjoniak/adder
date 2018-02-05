@@ -27,8 +27,8 @@ class Block(Rectangle):
     def _calculate_separator(self, input_connectors_n: int):
         return (self.height - input_connectors_n * Connector.WIDTH) / (input_connectors_n + 1)
 
-    def _ith_connector(self, i: int, separator: int, x: int):
-        return Connector(x - Connector.WIDTH / 2, self.y + (i + 1) * separator + i * Connector.WIDTH)
+    def _ith_connector(self, i: int, separator: int, x: int) -> Connector:
+        return Connector(x - Connector.WIDTH / 2, self.y + (i + 1) * separator + i * Connector.WIDTH, self)
 
     def inside_connector(self, position) -> Optional[Connector]:
         for connector in self.connectors:
@@ -40,9 +40,22 @@ class Block(Rectangle):
     def connectors(self):
         return chain(self.inputs, self.outputs)
 
+    def count_undefined_inputs(self):
+        return sum(c.value is None for c in self.inputs)
+
     def push(self):
         for c in self.outputs:
             c.push(self._get_value(self.inputs))
+
+    def switch(self, value=None):
+        # TODO: separate source, display and logic blocks
+        value = value if value is not None else not self.outputs[0].value
+        self.outputs[0].value = value
+        self._get_value = lambda _: value
+
+    def label(self):
+        connector = next(self.connectors)
+        return connector.value
 
 
 def source(value=1, x=0, y=0):
@@ -73,6 +86,20 @@ def xor(x=0, y=0):
     return double_block(x, y, operator.xor)
 
 
+def display_block(x=0, y=0):
+    return Block(x=x, y=y, input_connectors_n=1, output_connectors_n=0)
+
+
 def double_block(x=0, y=0, get_value=lambda _, __: 0):
     return Block(x, y, input_connectors_n=2, output_connectors_n=1,
-                 get_value=lambda inputs: get_value(inputs[0].value, inputs[1].value))
+                 get_value=lambda inputs: (
+                     (inputs[0].value is not None
+                      or inputs[1].value is not None)
+                     and get_value(inputs[0].value, inputs[1].value)))
+
+
+def operator_of(op, *args) -> Block:
+    operator_block = op()
+    for block, connector in zip(args, operator_block.inputs):
+        block.outputs[0].connect_with(connector)
+    return operator_block

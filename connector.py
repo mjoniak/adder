@@ -7,13 +7,14 @@ class Connector(Rectangle):
     WIDTH = 20
     HEIGHT = 20
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, block=None):
         super().__init__(x, y, self.WIDTH, self.HEIGHT)
 
         self.connections: Set['Connector'] = set()
         self._x, self._y = x, y
 
         self.value = None
+        self.block = block
 
     def notify(self):
         pass
