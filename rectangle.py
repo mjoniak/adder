@@ -20,3 +20,7 @@ class Rectangle:
 
     def middle(self):
         return self.x + self.width / 2, self.y + self.height / 2
+
+    def translate(self, delta):
+        self.x += delta[0]
+        self.y += delta[1]

@@ -36,6 +36,11 @@ class Block(Rectangle):
                 return connector
         return None
 
+    def translate(self, delta):
+        super().translate(delta)
+        for c in self.connectors:
+            c.translate(delta)
+
     @property
     def connectors(self):
         return chain(self.inputs, self.outputs)
