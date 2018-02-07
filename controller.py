@@ -40,7 +40,9 @@ class Controller:
         self._view.redraw()
 
     def _clicked_on_block(self, clicked_block: block.Block):
-        #clicked_block.switch()
+        if self._selected_block is clicked_block:
+            clicked_block.switch()
+
         self._selected_block = clicked_block
         self._calculate_bounding_box()
         self._view.redraw()

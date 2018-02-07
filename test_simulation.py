@@ -56,7 +56,6 @@ class SimulationTest(TestCase):
     def test_flip_flop_initial(self):
         self.assert_sr_flip_flop(1, 0, 1)  # set
         self.assert_sr_flip_flop(0, 1, 0)  # reset
-        self.assert_sr_flip_flop(0, 0, 0)  # previous
 
     def test_flip_flop_multiple_steps(self):
         source_s, source_r, q, not_q, simulation = sr_simulation(1, 0)

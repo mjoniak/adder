@@ -53,18 +53,34 @@ class Block(Rectangle):
             c.push(self._get_value(self.inputs))
 
     def switch(self, value=None):
-        # TODO: separate source, display and logic blocks
-        value = value if value is not None else not self.outputs[0].value
-        self.outputs[0].value = value
-        self._get_value = lambda _: value
+        pass
 
     def label(self):
-        connector = next(self.connectors)
-        return connector.value
+        pass
+
+
+class SourceBlock(Block):
+    def __init__(self, x, y, value):
+        self._value = value
+        super().__init__(x, y, input_connectors_n=0, output_connectors_n=1, get_value=lambda _: self._value)
+
+    def switch(self, value=None):
+        self._value = value if value is not None else not self._value
+
+    def label(self):
+        return self._value
+
+
+class DisplayBlock(Block):
+    def __init__(self, x, y):
+        super().__init__(x=x, y=y, input_connectors_n=1, output_connectors_n=0)
+
+    def label(self):
+        return self.inputs[0].value
 
 
 def source(value=1, x=0, y=0):
-    return Block(x, y, input_connectors_n=0, output_connectors_n=1, get_value=lambda _: value)
+    return SourceBlock(x, y, value)
 
 
 def negation(x=0, y=0):
@@ -72,19 +88,19 @@ def negation(x=0, y=0):
 
 
 def alternative(x=0, y=0):
-    return double_block(x, y, operator.or_)
+    return double_block(x, y, lambda a, b: a or b)
 
 
 def conjunction(x=0, y=0):
-    return double_block(x, y, operator.and_)
+    return double_block(x, y, lambda a, b: a and b)
 
 
 def nand(x=0, y=0):
-    return double_block(x, y, lambda a, b: not (a and b))
+    return double_block(x, y, lambda a, b: not (a == 1 and b == 1))
 
 
 def nor(x=0, y=0):
-    return double_block(x, y, lambda a, b: not (a or b))
+    return double_block(x, y, lambda a, b: not (a == 1 or b == 1))
 
 
 def xor(x=0, y=0):
@@ -92,7 +108,7 @@ def xor(x=0, y=0):
 
 
 def display_block(x=0, y=0):
-    return Block(x=x, y=y, input_connectors_n=1, output_connectors_n=0)
+    return DisplayBlock(x, y)
 
 
 def double_block(x=0, y=0, get_value=lambda _, __: 0):
