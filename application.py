@@ -30,11 +30,11 @@ class Application(tk.Frame):
         self._run_button = tk.Button(self.master,
                                      text='Run Simulation',
                                      bg='lightgreen',
-                                     relief='flat',
+                                     relief=tk.FLAT,
                                      command=self._controller.run_simulation)
         self._run_button.place(x=650, y=550, width=120)
 
-        toolbox = tk.Listbox(self, width=150)
+        toolbox = tk.Listbox(self, width=150, relief=tk.FLAT)
         toolbox.pack(side=tk.RIGHT, fill=tk.BOTH, expand=1)
         toolbox.bind('<Double-Button-1>', self._tool_selected)
 

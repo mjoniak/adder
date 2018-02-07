@@ -1,4 +1,7 @@
+import collections
+
 import block
+import components
 from simulation import Simulation
 
 
@@ -22,7 +25,8 @@ class Controller:
             "XOR Block": block.xor,
             "NAND Block": block.nand,
             "NOR Block": block.nor,
-            "Display": block.display_block
+            "Display": block.display_block,
+            "RS Flip-flop": components.rs_flip_flop
         }
 
     def clicked_on_board(self, event):
@@ -73,8 +77,11 @@ class Controller:
 
     def tool_selected(self, tool_name):
         constructor = self.block_constructors[tool_name]
-        new_block = constructor(x=100, y=100)
-        self.observed_blocks.add(new_block)
+        constructed = constructor(x=100, y=100)
+        if isinstance(constructed, collections.Iterable):
+            self.observed_blocks.update(constructed)
+        else:
+            self.observed_blocks.add(constructed)
         self._view.redraw()
 
     def drag_selected_block(self, position):

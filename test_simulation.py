@@ -1,19 +1,12 @@
 from unittest import TestCase
 
 from block import source, conjunction, negation, operator_of, nor
+from components import rs_flip_flop
 from simulation import Simulation
 
 
-def sources(*args):
-    return tuple(source(v) for v in args)
-
-
 def sr_simulation(initial_s, initial_q):
-    source_s, source_r = sources(initial_s, initial_q)
-
-    nor1 = operator_of(nor, source_s)
-    nor2 = operator_of(nor, nor1, source_r)
-    nor2.outputs[0].connect_with(nor1.inputs[1])
+    nor1, nor2, source_r, source_s, _, _ = rs_flip_flop(initial_q, initial_s)
     simulation = Simulation([source_s, source_r, nor1, nor2])
     return source_s, source_r, nor2.outputs[0], nor1.outputs[0], simulation
 

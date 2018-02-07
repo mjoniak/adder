@@ -20,7 +20,8 @@ class Connector(Rectangle):
         pass
 
     def connect_with(self, other: 'Connector'):
-        self.connections.add(other)
+        if other.block is not self.block or self.block is None:
+            self.connections.add(other)
 
     def push(self, value):
         self.value = value
