@@ -37,7 +37,6 @@ class SimulationTest(TestCase):
 
         simulation.run()
         self.assertEqual(0, neg.outputs[0].value)
-        # TODO: disconnected AND blocks
 
     def test_disconnected(self):
         block = nor()
@@ -51,7 +50,7 @@ class SimulationTest(TestCase):
         self.assert_sr_flip_flop(0, 1, 0)  # reset
 
     def test_flip_flop_multiple_steps(self):
-        source_s, source_r, q, not_q, simulation = sr_simulation(1, 0)
+        source_s, _, q, not_q, simulation = sr_simulation(1, 0)
         simulation.run()
 
         source_s.switch(1)

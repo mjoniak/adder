@@ -23,13 +23,15 @@ class Block(Rectangle):
 
     def _add_output(self, output_connectors_n: int):
         separator = self._calculate_separator(output_connectors_n)
-        self.outputs = [self._ith_connector(i, separator, self.x + self.width) for i in range(output_connectors_n)]
+        self.outputs = [self._ith_connector(i, separator, self.x + self.width)
+                        for i in range(output_connectors_n)]
 
     def _calculate_separator(self, input_connectors_n: int):
         return (self.height - input_connectors_n * Connector.WIDTH) / (input_connectors_n + 1)
 
     def _ith_connector(self, i: int, separator: int, x: int) -> Connector:
-        return Connector(x - Connector.WIDTH / 2, self.y + (i + 1) * separator + i * Connector.WIDTH, self)
+        return Connector(x - Connector.WIDTH / 2,
+                         self.y + (i + 1) * separator + i * Connector.WIDTH, self)
 
     def inside_connector(self, position) -> Optional[Connector]:
         for connector in self.connectors:
@@ -63,7 +65,10 @@ class Block(Rectangle):
 class SourceBlock(Block):
     def __init__(self, x, y, value):
         self._value = value
-        super().__init__(x, y, input_connectors_n=0, output_connectors_n=1, get_value=lambda _: self._value)
+        super().__init__(x, y,
+                         input_connectors_n=0,
+                         output_connectors_n=1,
+                         get_value=lambda _: self._value)
 
     def switch(self, value=None):
         self._value = value if value is not None else not self._value
@@ -85,7 +90,11 @@ def source(value=1, x=0, y=0):
 
 
 def negation(x=0, y=0):
-    return Block(x, y, input_connectors_n=1, output_connectors_n=1, get_value=lambda inputs: not inputs[0].value, label='NOT')
+    return Block(x, y,
+                 input_connectors_n=1,
+                 output_connectors_n=1,
+                 get_value=lambda inputs: not inputs[0].value,
+                 label='NOT')
 
 
 def alternative(x=0, y=0):

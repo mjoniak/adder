@@ -8,6 +8,7 @@ class Application(tk.Frame):
         super().__init__(master)
 
         self._controller = Controller(self)
+        self._mouse_pos = None
 
         self.pack()
         self._create_widgets()
@@ -77,7 +78,7 @@ class Application(tk.Frame):
             self._canvas.create_text(x, y, text=text)
 
         if bounding_box is not None:
-            self._canvas.create_rectangle(bounding_box, outline='blue', dash=(3,5))
+            self._canvas.create_rectangle(bounding_box, outline='blue', dash=(3, 5))
 
 ROOT = tk.Tk()
 APP = Application(master=ROOT)
